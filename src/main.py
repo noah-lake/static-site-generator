@@ -1,5 +1,6 @@
 import os
 import shutil
+from pathlib import Path
 
 from md_to_html import extract_title, markdown_to_html_node
 
@@ -28,10 +29,21 @@ def generate_page(from_path, template_path, dest_path):
     html = md.to_html()
     title = extract_title(markdown)
     page = template.replace("{{ Title }}", title).replace("{{ Content }}", html)
-    # if not os.path.exists(dest_path):
-    # os.makedirs(dest_path)
     with open(dest_path, "w") as d:
         d.write(page)
+
+
+def generate_pages_recursive(dir_path, template_path, dest_dir_path):
+    contents = os.listdir(dir_path)
+    for f in contents:
+        path = f"{os.path.join(dir_path)}/{f}"
+        mirror = f"{os.path.join(dest_dir_path)}/{f}"
+        if os.path.isdir(path):
+            os.makedirs(mirror)
+            generate_pages_recursive(path, template_path, mirror)
+        if os.path.isfile(path):
+            goal = f"{os.path.join(dest_dir_path)}/index.html"
+            generate_page(path, template_path, goal)
 
 
 def main():
@@ -47,10 +59,8 @@ def main():
         "./public",
     )
 
-    generate_page(
-        "./content/index.md",
-        "./template.html",
-        "./public/index.html",
+    generate_pages_recursive(
+        dir_path="./content", template_path="./template.html", dest_dir_path="./public"
     )
 
 
