@@ -63,6 +63,7 @@ def generate_pages_recursive(dir_path, template_path, dest_dir_path, basepath):
 
 
 def main(basepath="/"):
+    # Removes the contents of the docs folder for regeneration
     for f in os.listdir("docs"):
         filepath = os.path.join("docs", f)
         if os.path.isfile(filepath):
@@ -70,11 +71,13 @@ def main(basepath="/"):
         if os.path.isdir(filepath):
             shutil.rmtree(filepath)
 
+    # Copies all of the static data into docs
     copy_static(
         "static",
         "docs",
     )
 
+    # Generates pages for each file in the content directory and writes them into docs
     generate_pages_recursive(
         dir_path="content",
         template_path="template.html",
@@ -83,6 +86,7 @@ def main(basepath="/"):
     )
 
 
+# Tries to take an argument from the cli, defaults to "/" if none is provided
 try:
     basepath = sys.argv[1]
 except IndexError:
