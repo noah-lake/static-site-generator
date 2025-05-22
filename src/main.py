@@ -37,19 +37,21 @@ def generate_page(from_path, template_path, dest_path):
 def main():
     for f in os.listdir("./public"):
         filepath = os.path.join("./public", f)
-        os.remove(filepath)
+        if os.path.isfile(filepath):
+            os.remove(filepath)
+        if os.path.isdir(filepath):
+            shutil.rmtree(filepath)
 
     copy_static(
         "./static",
         "./public",
     )
 
-
-#    generate_page(
-#        "./content/index.md",
-#        "./template.html",
-#        "./public/index.html",
-#    )
+    generate_page(
+        "./content/index.md",
+        "./template.html",
+        "./public/index.html",
+    )
 
 
 main()

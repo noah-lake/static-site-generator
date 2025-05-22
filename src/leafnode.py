@@ -18,7 +18,7 @@ class LeafNode(HTMLNode):
         if self.tag == "img":
             if self.props is None:
                 raise ValueError("image props may not be None")
-            return f'<{self.tag} src="{self.props.get("src")}.jpg" alt="{self.props.get("alt")}" />'
+            return f'<{self.tag} src="{self.props.get("src")}" alt="{self.props.get("alt")}" />'
         if self.tag == "a":
             if self.props is None:
                 raise ValueError("link props may not be None")

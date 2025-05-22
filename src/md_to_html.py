@@ -193,7 +193,7 @@ def text_to_textnodes(text):
     code_formatted = split_nodes_delimiter(italic_formatted, "`", TextType.CODE)
     image_formatted = split_nodes_image(code_formatted)
     link_formatted = split_nodes_link(image_formatted)
-    return link_formatted
+    return [node for node in link_formatted if len(node.text) > 0]
 
 
 def markdown_to_blocks(markdown):
@@ -241,7 +241,7 @@ def block_to_block_type(block):
         last_number = int(block[0]) - 1
         lines = block.splitlines()
         for line in lines:
-            if line[0] == last_number + 1 and line[1:2] == ". ":
+            if int(line[0]) == last_number + 1 and line[1:3] == ". ":
                 return BlockType.ORDERED_LIST
     return BlockType.PARAGRAPH
 
@@ -257,7 +257,7 @@ def text_to_children(block):
 
 def heading_block_to_html_node(block):
     hashtags = re.findall(r"(^\#+ )", block)
-    tag = f"h{len(hashtags[0])}"
+    tag = f"h{len(hashtags[0]) - 1}"
     text = block.strip(hashtags[0])
     children = text_to_children(text)
     return ParentNode(tag=tag, children=children)
@@ -276,7 +276,7 @@ def quote_block_to_html_node(block):
     text = ""
     for line in lines:
         text += line.strip(">")
-    children = text_to_children(text)
+    children = text_to_children(text.strip())
     return ParentNode(tag="blockquote", children=children)
 
 
@@ -329,3 +329,10 @@ def extract_title(markdown):
         raise Exception("Document must start with an h1 header")
     lines = markdown.splitlines()
     return lines[0].strip("# ")
+
+
+text = "![JRR Tolkien sitting](/images/tolkien.png)"
+nodes = text_to_textnodes(text)
+leaf = text_node_to_html_node(nodes[0])
+html = leaf.to_html()
+print(html)
