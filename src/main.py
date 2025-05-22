@@ -36,7 +36,7 @@ def generate_page(from_path, template_path, dest_path, basepath):
     title = extract_title(markdown)
     # Copy a template file (a .html in this case) and replace its filler content with our html data
     page = template.replace("{{ Title }}", title).replace("{{ Content }}", html)
-    formatted_page = page.replace('href="/', f'href="{basepath}').replace(
+    formatted_page = page.replace('href="/', f"href={basepath}").replace(
         'src="/', f"src={basepath}"
     )
     # Write it to destination
