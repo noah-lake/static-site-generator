@@ -7,7 +7,6 @@ from md_to_html import extract_title, markdown_to_html_node
 def copy_static(source, destination):
     if not os.path.exists(source):
         raise ValueError("Source does not exist")
-    os.mkdir(destination)
     source_contents = os.listdir(source)
     for c in source_contents:
         path = f"{os.path.join(source)}/{c}"
@@ -29,24 +28,28 @@ def generate_page(from_path, template_path, dest_path):
     html = md.to_html()
     title = extract_title(markdown)
     page = template.replace("{{ Title }}", title).replace("{{ Content }}", html)
-    if not os.path.exists(dest_path):
-        os.makedirs(os.path.dirname(dest_path))
+    # if not os.path.exists(dest_path):
+    # os.makedirs(dest_path)
     with open(dest_path, "w") as d:
         d.write(page)
 
 
 def main():
-    shutil.rmtree("/home/noahl/static-site-generator/public")
+    for f in os.listdir("./public"):
+        filepath = os.path.join("./public", f)
+        os.remove(filepath)
 
     copy_static(
-        "/home/noahl/static-site-generator/static",
-        "/home/noahl/static-site-generator/public",
+        "./static",
+        "./public",
     )
-    # generate_page(
-    #    "/home/noahl/static-site-generator/content/index.md",
-    #    "/home/noahl/static-site-generator/template.html",
-    #    "/home/noahl/static-site-generator/public/index.html",
-    # )
+
+
+#    generate_page(
+#        "./content/index.md",
+#        "./template.html",
+#        "./public/index.html",
+#    )
 
 
 main()

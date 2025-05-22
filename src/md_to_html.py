@@ -200,7 +200,8 @@ def markdown_to_blocks(markdown):
     formatted_blocks = []
     blocks = markdown.split("\n\n")
     for block in blocks:
-        formatted_blocks.append(block.strip())
+        format = block.strip()
+        formatted_blocks.append(format.strip("\n"))
     return [block for block in formatted_blocks if len(block) > 0]
 
 
@@ -263,7 +264,9 @@ def heading_block_to_html_node(block):
 
 
 def code_block_to_html_node(block):
-    text = f"<pre><code>{block.strip('`')}</code></pre>"
+    cleaned = block.strip("`")
+    cut = cleaned.lstrip("\n")
+    text = f"<pre><code>{cut}</code></pre>"
     node = TextNode(text, TextType.TEXT)
     return text_node_to_html_node(node)
 
@@ -319,3 +322,10 @@ def markdown_to_html_node(markdown):
         if block_type == BlockType.PARAGRAPH:
             children.append(paragraph_block_to_html_node(block))
     return ParentNode(tag="div", children=children)
+
+
+def extract_title(markdown):
+    if not markdown.startswith("# "):
+        raise Exception("Document must start with an h1 header")
+    lines = markdown.splitlines()
+    return lines[0].strip("# ")
